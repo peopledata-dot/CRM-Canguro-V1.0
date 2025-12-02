@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Generador de Cartas de Amonestación</title>
+    <style>
+        /* Estilos CSS Base */
+        body {
+            font-family: Arial, sans-serif;
+            /* Ajustamos el margen superior para que el contenido no quede bajo la barra fija */
+            margin: 70px 40px 40px 40px; 
+            
+            /* --- FONDO CON IMAGEN FIJA Y TRANSPARENCIA BLANCA --- */
+            /* 1. Capa blanca semi-transparente (0.5 opacity) sobre la imagen */
+            /* 2. Propiedad 'background-attachment: fixed;' para que la imagen no se mueva al hacer scroll */
+            /* Asegúrate que 'main2.png' esté en la misma carpeta. */
+            background-image: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), url('main2.png'); 
+            background-size: cover; 
+            background-position: center; 
+            background-repeat: no-repeat;
+            background-attachment: fixed; /* <<-- CLAVE PARA FONDO FIJO */
+            
+            /* Fondo de fallback */
+            background-color: #f0f0f0; 
+            color: #000; /* Texto negro para mejor contraste sobre fondo blanco/claro */
+        }
+
+        .datos-linea {
+                    display: block; 
+                    margin: 0;
+                    white-space: pre-wrap; /* Asegura que el nombre largo se ajuste */
+                    line-height: 1.3;
+        }
+
+        h1 {
+            color: #000; /* Negro */
+            text-align: center;
+        }
+
+        /* --- ESTILOS DE NAVEGACIÓN SUPERIOR (FIJA) --- */
+        #top-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 10px 20px; 
+            background-color: #333; /* Color oscuro para la barra superior */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+            z-index: 100;
+            box-sizing: border-box; 
+        }
+        
+        #fecha-actualizacion {
+            font-size: 14px;
+            color: #FFD700; /* Dorado/Amarillo para la fecha */
+            margin-right: auto; 
+        }
+
+        #boton-container {
+            display: flex;
+        }
+
+        #top-bar button {
+            margin-left: 10px; 
+            padding: 8px 15px;
+            font-size: 14px;
+            cursor: pointer;
+            border: 1px solid #FFD700;
+            border-radius: 4px;
+            background-color: #000;
+            color: #FFD700;
+            font-weight: bold;
+            white-space: nowrap; 
+        }
+        #top-bar button:hover {
+            background-color: #FFD700;
+            color: #000;
+        }
+        /* --- FIN ESTILOS DE NAVEGACIÓN --- */
+
+        h3 {
+            margin-top: 20px;
+            margin-bottom: 5px;
+            color: #000; /* Negro para títulos de filtros */
+        }
+
+        select, input[type="text"] {
+            padding: 10px;
+            margin: 10px 10px 10px 0;
+            background-color: #fff; /* Fondo blanco para mejor visibilidad del input */
+            color: #000; /* Texto negro */
+            border: 1px solid #333; /* Borde oscuro */
+            border-radius: 4px;
+        }
+
+        button { /* Estilo unificado para todos los botones, incluyendo los de la tabla */
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+            border: 1px solid #FFD700; 
+            padding: 10px;
+            background-color: #333; /* Botones oscuros para contraste */
+            color: #FFD700;
+        }
+        button:hover {
+            background-color: #FFD700;
+            color: #000;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: rgba(255, 255, 255, 0.9); /* Fondo de tabla ligeramente transparente y claro */
+            color: #000;
+        }
+
+        th, td {
+            border: 1px solid #333; /* Borde oscuro */
+            padding: 8px;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        th {
+            background-color: #666; /* Fondo de encabezado de tabla */
+            color: #FFD700;
+        }
+        
+        /* Estilos para los selectores de la tabla */
+        #tabla-empleados select {
+            background-color: #f8f8f8;
+            color: #000;
+            border: 1px solid #333;
+            padding: 5px;
+            margin: 0;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+
+        .logo {
+            text-align: center;
+            margin-top: 50px; 
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        // *** PROTECCIÓN DE RUTA Y NAVEGACIÓN ***
+        if (localStorage.getItem('sesionCanguro') !== 'activa') {
+            window.location.href = 'iniciar-sesion.html';
+        }
+
+        function cerrarSesion() {
+            localStorage.removeItem('sesionCanguro');
+            window.location.href = 'iniciar-sesion.html'; 
+        }
+
+        function irConstancia() {
+            window.location.href = 'constancia.html';
+        }
+        
+        // *** FUNCIÓN PARA ACTUALIZAR LA FECHA/HORA ***
+        function actualizarFechaHora() {
+            const now = new Date();
+            const fecha = now.toLocaleDateString('es-VE', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+            });
+            const hora = now.toLocaleTimeString('es-VE', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false 
+            });
+
+            const elemento = document.getElementById('fecha-actualizacion');
+            if (elemento) {
+                elemento.textContent = `Actualizado: ${fecha} ${hora}`;
+            }
+            // Llama a actualizarFechaHora cada segundo para mantenerla actualizada
+            setTimeout(actualizarFechaHora, 1000); 
+        }
+    </script>
+
+    <div id="top-bar">
+        <div id="fecha-actualizacion"></div> 
+        
+        <div id="boton-container">
+            <button onclick="irConstancia()">Ir a Constancia</button>
+            <button onclick="cerrarSesion()">Cerrar sesión</button>
+        </div>
+    </div>
+
+    <div class="logo">
+        <img src="logo-can2.png" alt="Logo Canguro" style="height:100px;">
+    </div>
+
+    <h1>Generador de Cartas de Amonestación</h1>
+
+    <div style="display: flex; gap: 20px;">
+        <div>
+            <h3>Filtrar por nombre o cédula:</h3>
+            <input type="text" id="filtro-nombre" placeholder="Buscar por nombre o cédula...">
+        </div>
+        <div>
+            <h3>Filtrar por cargo:</h3>
+            <select id="filtro-cargo">
+                <option value="">-- Mostrar todos --</option>
+            </select>
+        </div>
+    </div>
+    
+    <table id="tabla-empleados">
+        <thead>
+            <tr>
+                <th>Cédula</th>
+                <th>Nombre</th>
+                <th>Cargo</th>
+                <th>Razón Social</th>
+                <th>Literal</th>
+                <th>Motivo</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody id="cuerpo-tabla"></tbody>
+    </table>
+
+    <script>
+        // --- Configuraciones de Google Sheets (usando valores de ejemplo) ---
+        const SHEET_ID = '19i5pwrIx8RX0P2OkE1qY2o5igKvvv2hxUuvb9jM_8LE';
+        const API_KEY  = 'AIzaSyD8Su9VTM_oynBtrPvVA4zRyeu-UjeEJDw';
+        const RANGE_EMP = 'Empleados!A2:O';
+        const RANGE_LIT = 'Amonestaciones!A2:D';
+
+        let empleados = [];
+        let literales = [];
+
+        // Función para abrir la carta (AJUSTADA PARA EVITAR SALTO DE PÁGINA)
+function abrirAmonestacion({ cedula, nombre, cargo, razon, rif = 'N/A', direccion = 'N/A', literal, descripcion, observacion }) {
+    
+    // Generación de fecha actual
+    const fecha = new Date();
+    const dia = fecha.getDate();
+    const mes = fecha.toLocaleString('es-VE', { month: 'long' });
+    const año = fecha.getFullYear();
+    const fechaDocumento = `Caracas, ${dia} de ${mes} de ${año}`;
+    
+    // Variables dinámicas
+    const nombreEmpleado = nombre.toUpperCase(); 
+    const cedulaEmpleado = cedula.toUpperCase(); 
+    const motivoNotificacion = descripcion; 
+    const observacionesTexto = observacion; 
+    const literalTexto = literal; 
+    const razonSocial = razon.toUpperCase(); 
+    const rifEmpresa = rif.toUpperCase(); 
+
+    const html = `
+        <!DOCTYPE html>
+        <html lang="es">
+        <head>
+            <meta charset="UTF-8" />
+            <title>Acta de Notificación</title>
+            <style>
+                body { 
+                    font-family: Arial, sans-serif; 
+                    margin: 30px; /* REDUCIDO: De 40px a 30px para ganar espacio */
+                    line-height: 1.5; /* Ligeramente reducido de 1.6 a 1.5 */
+                    color:#000; 
+                    font-size: 11pt; 
+                }
+                h2 { 
+                    text-align: center; 
+                    font-size: 16pt; 
+                    margin-bottom: 20px; 
+                }
+                p { 
+                    margin: 10px 0; /* REDUCIDO: De 15px a 10px en párrafos */
+                    text-align: justify; 
+                }
+                .secciones {
+                    display: flex;
+                    justify-content: space-between;
+                    margin-top: 80px; /* REDUCIDO: De 100px a 80px para subir más */
+                    text-align: center;
+                    /* OPTIMIZACIÓN CLAVE: Evita que esta sección se rompa entre páginas */
+                    page-break-inside: avoid; 
+                }
+                .secciones > div {
+                    width: 45%; 
+                    font-weight: bold;
+                }
+                .datos-pie {
+                    text-align: left;
+                    margin-top: 10px;
+                }
+                .datos-linea {
+                    display: block; 
+                    margin: 0;
+                    white-space: pre-wrap;
+                    line-height: 1.3;
+                }
+                .titulo-notificacion {
+                    font-size: 12pt;
+                    font-weight: bold;
+                    display: inline;
+                }
+                .encabezado-empresa {
+                    display: flex;
+                    align-items: center;
+                    margin-bottom: 50px;
+                }
+                .encabezado-info {
+                    margin-left: 15px;
+                    font-size: 10pt;
+                    font-weight: bold;
+                }
+                .encabezado-info span {
+                    display: block;
+                    margin: 0;
+                }
+                @media print { 
+                    @page { 
+                        margin: 0.75in; /* Ligeramente reducido para impresión */
+                    } 
+                }
+            </style>
+        </head>
+        <body>
+            <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.08; z-index: 0;">
+                <img src='logo-canguro.png' alt='Logo Canguro' style="height:190px;" />
+            </div>
+            
+            <div style="width:650px; margin:0 auto; z-index: 1;">
+            
+                <div class="encabezado-empresa">
+                    <img src='logo-cancar.png' alt='Logo Canguro' style="width: 50px; height: auto;" />
+                    <div class="encabezado-info">
+                        <span>${razonSocial}</span>
+                        <span>${rifEmpresa}</span>
+                    </div>
+                </div>
+                <p style="margin-bottom: 5px;">Señor (a):</p>
+                <p style="margin: 0; font-weight: bold;">${nombreEmpleado}</p>
+                <p style="margin: 0; font-weight: bold;">C.I.: ${cedulaEmpleado}</p>
+                <p style="margin-top: 20px;">Presente.</p>
+                <h2 style="margin-top: 30px;">ACTA DE NOTIFICACIÓN</h2>
+
+                <p>
+                    Por medio de la presente nos dirigimos a usted con la finalidad de levantar
+                    formalmente la respectiva notificación por: 
+                    <span class="titulo-notificacion">${motivoNotificacion}</span>
+                </p>
+                
+                <p>
+                    <strong>Observaciones:</strong>${observacionesTexto}
+                </p>
+
+                <p>
+                    Como usted comprenderá afecta su relación de trabajo en nuestra empresa, sino que
+                    también causa serios problemas en las operaciones a la que está asignado.
+                </p>
+                
+                <p>
+                    Además, que esta situación impide el cumplimiento de los objetivos organizacionales
+                    considerando esto una <span style="font-weight:bold;">Falta grave</span> a las obligaciones que impone la relación de trabajo
+                    según la Ley Orgánica del Trabajo, de los Trabajadores y Trabajadoras LOTTT, en el
+                    artículo 79 Literal ${literalTexto}.
+                </p>
+
+                <p>
+                    El mismo tiene incidencia en su expediente personal.
+                </p>
+
+                <p>
+                    Se le pide que eviten en el futuro estas faltas, para no tener que aplicar correctivos
+                    mayores.
+                </p>
+
+                <p style="text-align:right; margin-top: 40px;">
+                    ${fechaDocumento}
+                </p>
+
+                <div class="secciones">
+                    <div>
+                        <p><strong>RECIBE</strong></p>
+                        <div class="datos-pie">
+                            <span class="datos-linea"><strong>${nombreEmpleado}</strong></span>
+                            <span class="datos-linea"><strong>C.I.: ${cedulaEmpleado}</strong></span>
+                            <hr style="border: 1px dashed black; margin-top: 20px; width: 100%;" />
+                        </div>
+                    </div>
+                    <div>
+                        <p><strong>SUPERVISOR</strong></p>
+                        <div class="datos-pie">
+                             <hr style="border: 1px dashed black; margin-top: 50px; width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </body>
+        </html>
+    `;
+
+    const win = window.open('', '_blank');
+    if (win) {
+        win.document.write(html);
+        win.document.close();
+        win.focus();
+        win.print(); 
+    } else {
+        alert("El navegador bloqueó la ventana emergente. Habilita popups para continuar.");
+    }
+}
+
+        // --- Funciones de Carga de Datos y Lógica (sin cambios funcionales) ---
+        async function cargarEmpleados() {
+            const cuerpo = document.getElementById('cuerpo-tabla');
+            try {
+                // Se llama a actualizarFechaHora al inicio y luego por setTimeout
+                actualizarFechaHora(); 
+                
+                const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${RANGE_EMP}?key=${API_KEY}`;
+                const res = await fetch(url);
+                if (!res.ok) throw new Error('Error al cargar empleados');
+                const data = await res.json();
+
+                empleados = (data.values || []).map(row => ({
+                    cedula: row[0] || '',
+                    nombre: row[1] || '',
+                    cargo: row[2] || '',
+                    razon: row[6] || '',
+                    rif: row[12] || 'N/A',       
+                    direccion: row[13] || 'N/A' 
+                }));
+
+                renderTablaEmpleados(empleados);
+                cargarSelectCargos();
+            } catch (error) {
+                console.error("Error cargando empleados:", error);
+                cuerpo.innerHTML = `<tr><td colspan="7">Error de conexión con Google Sheets. Revisa la consola (F12) para más detalles.</td></tr>`;
+            }
+        }
+
+        async function cargarLiterales() {
+            try {
+                const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${RANGE_LIT}?key=${API_KEY}`;
+                const res = await fetch(url);
+                if (!res.ok) throw new Error('Error al cargar literales');
+                const data = await res.json();
+
+                literales = [];
+
+                (data.values || []).forEach(row => {
+                    const codigo = row[0]?.trim();
+                    const escenario = row[2]?.trim() || '';
+                    const observacion = row[3]?.trim() || '';
+                    
+                    if (codigo && escenario) {
+                        let literal = literales.find(l => l.codigo === codigo);
+                        if (!literal) {
+                            literal = { codigo, escenarios: [] };
+                            literales.push(literal);
+                        }
+                        literal.escenarios.push({ texto: escenario, observacion });
+                    }
+                });
+            } catch (error) {
+                console.error("Error cargando literales:", error);
+            }
+        }
+
+        function cargarSelectCargos() {
+            const select = document.getElementById('filtro-cargo');
+            const cargosUnicos = [...new Set(empleados.map(emp => emp.cargo).filter(c => c))].sort();
+
+            cargosUnicos.forEach(cargo => {
+                const option = document.createElement('option');
+                option.value = cargo;
+                option.textContent = cargo;
+                select.appendChild(option);
+            });
+        }
+
+        function renderTablaEmpleados(lista) {
+            const cuerpo = document.getElementById('cuerpo-tabla');
+            cuerpo.innerHTML = '';
+
+            lista.forEach(emp => {
+                const fila = document.createElement('tr');
+
+                const selectLiteral = document.createElement('select');
+                selectLiteral.innerHTML = '<option value="">-- Literal --</option>';
+                literales.forEach(lit => {
+                    const option = document.createElement('option');
+                    option.value = lit.codigo;
+                    option.textContent = lit.codigo;
+                    selectLiteral.appendChild(option);
+                });
+
+                const selectMotivo = document.createElement('select');
+                selectMotivo.innerHTML = '<option value="">-- Motivo --</option>';
+
+                selectLiteral.addEventListener('change', () => {
+                    const codigo = selectLiteral.value;
+                    const literal = literales.find(l => l.codigo === codigo);
+                    
+                    selectMotivo.innerHTML = '<option value="">-- Motivo --</option>';
+                    
+                    if (literal) {
+                        literal.escenarios.forEach(esc => {
+                            const option = document.createElement('option');
+                            option.value = esc.texto;
+                            option.textContent = esc.texto;
+                            option.dataset.observacion = esc.observacion;
+                            selectMotivo.appendChild(option);
+                        });
+                    }
+                });
+
+                const boton = document.createElement('button');
+                boton.textContent = 'Generar';
+                boton.onclick = () => {
+                    const literalCodigo = selectLiteral.value;
+                    const motivoTexto = selectMotivo.value;
+                    const motivoOption = selectMotivo.querySelector(`option[value="${motivoTexto}"]`);
+                    const observacion = motivoOption?.dataset.observacion || ''; 
+
+                    if (!literalCodigo || !motivoTexto) {
+                        alert('Selecciona un literal y un motivo válido');
+                        return;
+                    }
+
+                    const payload = {
+                        cedula: emp.cedula,
+                        nombre: emp.nombre,
+                        cargo: emp.cargo,
+                        razon: emp.razon,
+                        rif: emp.rif, 
+                        direccion: emp.direccion,
+                        literal: literalCodigo,
+                        descripcion: motivoTexto,
+                        observacion: observacion,
+                    };
+
+                    abrirAmonestacion(payload);
+                };
+
+                fila.innerHTML = `
+                    <td>${emp.cedula}</td>
+                    <td>${emp.nombre}</td>
+                    <td>${emp.cargo}</td>
+                    <td>${emp.razon}</td>
+                `;
+                
+                const tdLiteral = document.createElement('td');
+                tdLiteral.appendChild(selectLiteral);
+                
+                const tdMotivo = document.createElement('td');
+                tdMotivo.appendChild(selectMotivo);
+                
+                const tdBoton = document.createElement('td');
+                tdBoton.appendChild(boton);
+
+                fila.appendChild(tdLiteral);
+                fila.appendChild(tdMotivo);
+                fila.appendChild(tdBoton);
+                cuerpo.appendChild(fila);
+            });
+        }
+        
+        // --- Lógica de Filtrado (sin cambios) ---
+        document.getElementById('filtro-nombre').addEventListener('input', (e) => {
+            const texto = e.target.value.toLowerCase();
+            const cargoSeleccionado = document.getElementById('filtro-cargo').value;
+            
+            const filtrados = empleados.filter(emp =>
+                (emp.nombre.toLowerCase().includes(texto) || emp.cedula.toLowerCase().includes(texto)) &&
+                (cargoSeleccionado === '' || emp.cargo === cargoSeleccionado)
+            );
+            renderTablaEmpleados(filtrados);
+        });
+
+        document.getElementById('filtro-cargo').addEventListener('change', (e) => {
+            const cargoSeleccionado = e.target.value;
+            const textoFiltroNombre = document.getElementById('filtro-nombre').value.toLowerCase();
+            
+            const filtrados = empleados.filter(emp =>
+                (cargoSeleccionado === '' || emp.cargo === cargoSeleccionado) &&
+                (emp.nombre.toLowerCase().includes(textoFiltroNombre) || emp.cedula.toLowerCase().includes(textoFiltroNombre))
+            );
+            renderTablaEmpleados(filtrados);
+        });
+
+        // --- Inicialización ---
+        cargarLiterales().then(() => cargarEmpleados());
+    </script>
+</body>
+</html>
