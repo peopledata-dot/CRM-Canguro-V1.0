@@ -432,8 +432,8 @@
 
                 empleados = (data.values || []).map(row => {
                     return {
-                        cedula: row[0] || '',
-                        nombre: row[1] || '',
+                        cedula: row[1] || '',
+                        nombre: row[0] || '',
                         cargo:  row[2] || '',
                         ingreso: row[3] || '',
                         egreso: row[4] || '',
