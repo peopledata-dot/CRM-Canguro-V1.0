@@ -13,7 +13,7 @@
             
             /* --- FONDO CON IMAGEN FIJA Y TRANSPARENCIA BLANCA --- */
             /* Capa blanca semi-transparente (0.5 opacity) sobre la imagen */
-            background-image: linear-gradient(hsla(0, 0%, 100%, 0.788), hsla(0, 0%, 100%, 0.788)), url('main2.png'); 
+            background-image: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), url('main2.png'); 
             background-size: cover; 
             background-position: center; 
             background-repeat: no-repeat;
@@ -432,8 +432,8 @@
 
                 empleados = (data.values || []).map(row => {
                     return {
-                        cedula: row[1] || '',
-                        nombre: row[0] || '',
+                        cedula: row[0] || '',
+                        nombre: row[1] || '',
                         cargo:  row[2] || '',
                         ingreso: row[3] || '',
                         egreso: row[4] || '',
