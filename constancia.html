@@ -8,33 +8,26 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            /* Ajustamos el margen superior para que el contenido no quede bajo la barra fija */
             margin: 70px 40px 40px 40px; 
-            
-            /* --- FONDO CON IMAGEN FIJA Y TRANSPARENCIA BLANCA --- */
-            /* Capa blanca semi-transparente (0.5 opacity) sobre la imagen */
             background-image: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), url('main2.png'); 
             background-size: cover; 
             background-position: center; 
             background-repeat: no-repeat;
-            background-attachment: fixed; /* Fondo fijo */
-            
-            /* Fondo de fallback */
+            background-attachment: fixed;
             background-color: #f0f0f0; 
-            color: #000; /* Texto negro para mejor contraste sobre fondo blanco/claro */
+            color: #000;
         }
         
         h1, h2, h3 { text-align: center; }
-        h1 { color: #000; margin: 0 0 6px; } /* Texto oscuro para el fondo claro */
-        h2 { color: #000; margin-bottom: 20px; } /* Texto oscuro */
+        h1 { color: #000; margin: 0 0 6px; }
+        h2 { color: #000; margin-bottom: 20px; }
         h3 { 
-            color: #333; /* Gris oscuro para títulos de filtros */
+            color: #333; 
             font-size: 16px; 
             margin: 0 0 8px 0; 
             text-align: left;
         }
 
-        /* --- ESTILOS DE NAVEGACIÓN SUPERIOR --- */
         #top-bar {
             position: fixed;
             top: 0;
@@ -44,7 +37,7 @@
             justify-content: space-between; 
             align-items: center; 
             padding: 10px 20px; 
-            background-color: #333; /* Barra oscura */
+            background-color: #333; 
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
             z-index: 100;
             box-sizing: border-box; 
@@ -52,7 +45,7 @@
         
         #fecha-actualizacion {
             font-size: 14px;
-            color: #FFD700; /* Dorado para la fecha */
+            color: #FFD700;
         }
 
         #boton-container {
@@ -72,10 +65,6 @@
             font-weight: bold;
             white-space: nowrap;
         }
-        /* Estilos específicos para botones funcionales */
-        #btn-masivo, #btn-limpiar {
-            font-weight: bold;
-        }
 
         #btn-masivo {
             background-color: #FFD700;
@@ -83,12 +72,11 @@
             border-color: #FFD700;
         }
         #btn-limpiar {
-            background-color: #999; /* Gris claro para el botón de limpiar */
+            background-color: #999;
             color: #000;
             border-color: #777;
         }
 
-        /* Estilos Hover */
         #top-bar button:not(#btn-masivo):not(#btn-limpiar):hover {
             background-color: #FFD700;
             color: #000;
@@ -107,13 +95,11 @@
             margin-top: 50px; 
             margin-bottom: 16px; 
         }
-        /* --- FIN ESTILOS DE NAVEGACIÓN SUPERIOR --- */
 
         input, select {
             padding: 10px;
-            margin: 0;
-            background-color: #fff; /* Fondo blanco */
-            color: #000; /* Texto negro */
+            background-color: #fff;
+            color: #000;
             border: 1px solid #333;
             border-radius: 4px;
             box-sizing: border-box;
@@ -121,12 +107,10 @@
         }
         .btn-generar { 
             padding: 4px 8px; 
-            margin: 0; 
-            width: auto; 
             cursor: pointer;
             transition: background-color 0.3s, color 0.3s;
             border: 1px solid #333; 
-            background-color: #555; /* Botón oscuro */
+            background-color: #555;
             color: #FFD700;
             border-radius: 4px;
         }
@@ -139,30 +123,28 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 10px;
-            background-color: rgba(255, 255, 255, 0.9); /* Fondo de tabla semi-transparente blanco */
-            color: #000; /* Texto negro en la tabla */
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #000;
         }
         th, td {
-            border: 1px solid #333; /* Borde oscuro */
+            border: 1px solid #333;
             padding: 8px;
             text-align: left;
             font-size: 14px;
         }
         thead {
-            background-color: #666; /* Fondo de encabezado gris */
+            background-color: #666;
             color: #FFD700;
         }
         input[type="checkbox"] {
             width: auto; 
-            margin: 0;
-            accent-color: #FFD700; /* Color del checkbox al ser seleccionado */
-            background-color: #fff;
+            accent-color: #FFD700;
         }
     </style>
 </head>
 <body>
     <script>
-        // *** FUNCIONES DE NAVEGACIÓN Y SESIÓN ***
+        // *** SEGURIDAD Y SESIÓN ***
         if (localStorage.getItem('sesionCanguro') !== 'activa') {
             window.location.href = 'iniciar-sesion.html';
         }
@@ -175,73 +157,43 @@
             window.location.href = 'amonestacion.html';
         }
         
-        // *** FUNCIÓN PARA ACTUALIZAR LA FECHA/HORA ***
+        // *** RELOJ EN TIEMPO REAL ***
         function actualizarFechaHora() {
             const now = new Date();
-            const fecha = now.toLocaleDateString('es-VE', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit'
-            });
-            const hora = now.toLocaleTimeString('es-VE', {
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-                hour12: false
-            });
-
+            const fecha = now.toLocaleDateString('es-VE', { year: 'numeric', month: '2-digit', day: '2-digit' });
+            const hora = now.toLocaleTimeString('es-VE', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
             const elemento = document.getElementById('fecha-actualizacion');
-            if (elemento) {
-                elemento.textContent = `Actualizado: ${fecha} ${hora}`;
-            }
-            setTimeout(actualizarFechaHora, 1000); // Refresca cada segundo
+            if (elemento) elemento.textContent = `Actualizado: ${fecha} ${hora}`;
+            setTimeout(actualizarFechaHora, 1000);
         }
 
-        // *** FUNCIÓN DE GENERACIÓN MASIVA ***
+        // *** ACCIONES MASIVAS ***
         function generarCartasMasivas() {
             const checkboxesSeleccionados = document.querySelectorAll('#cuerpo-tabla input[type="checkbox"]:checked');
-            
             if (checkboxesSeleccionados.length === 0) {
-                alert("Debes seleccionar al menos un empleado marcando la casilla al lado de la cédula.");
+                alert("Debes seleccionar al menos un empleado.");
                 return;
             }
 
             const listaSeleccionada = [];
             checkboxesSeleccionados.forEach(checkbox => {
-                const cedulaTarget = checkbox.value;
-                const empleado = empleados.find(emp => emp.cedula === cedulaTarget);
-                if (empleado) {
-                    listaSeleccionada.push(empleado);
-                }
+                const empleado = empleados.find(emp => emp.cedula === checkbox.value);
+                if (empleado) listaSeleccionada.push(empleado);
             });
 
-            const confirmacion = confirm(`¿Estás seguro de generar ${listaSeleccionada.length} cartas de constancia seleccionadas? Esto abrirá múltiples ventanas de impresión.`);
-            
-            if (confirmacion) {
-                listaSeleccionada.forEach(emp => {
-                    abrirCarta(emp);
-                });
-                // Llama a limpiarSeleccion después de la generación masiva
-                // Nota: Los navegadores pueden bloquear la impresión masiva si no se habilita.
+            if (confirm(`¿Generar ${listaSeleccionada.length} cartas? Habilita las ventanas emergentes.`)) {
+                listaSeleccionada.forEach(emp => abrirCarta(emp));
                 setTimeout(limpiarSeleccion, 1000); 
             }
         }
 
-        // *** FUNCIÓN: LIMPIAR SELECCIÓN ***
         function limpiarSeleccion() {
-            const checkboxes = document.querySelectorAll('#cuerpo-tabla input[type="checkbox"]');
-            checkboxes.forEach(checkbox => {
-                checkbox.checked = false;
-            });
-            // Opcional: mostrar un mensaje de limpieza, pero si se llama después de impresión masiva puede ser molesto.
-            // alert('Selección limpiada.');
+            document.querySelectorAll('#cuerpo-tabla input[type="checkbox"]').forEach(cb => cb.checked = false);
         }
-
     </script>
     
     <div id="top-bar">
         <div id="fecha-actualizacion"></div> 
-        
         <div id="boton-container">
             <button id="btn-limpiar" onclick="limpiarSeleccion()">Limpiar selección</button> 
             <button id="btn-masivo" onclick="generarCartasMasivas()">Generar Cartas Masivas</button> 
@@ -255,12 +207,12 @@
         <h1>Generador de Cartas de Trabajo Canguro Venezuela</h1>
     </div>
     
-    <h2 style="color: #000;">Empleados Activos Organizacional</h2>
+    <h2>Empleados Activos Organizacional</h2>
     
     <div style="max-width: 1000px; margin: 0 auto 20px; display: flex; gap: 20px;">
         <div style="flex: 1;">
             <h3>Filtrar por Cédula o Nombre:</h3>
-            <input type="text" id="filtro-nombre" placeholder="Buscar por Cédula o Nombre..." />
+            <input type="text" id="filtro-nombre" placeholder="Buscar..." />
         </div>
         <div style="flex: 1;">
             <h3>Filtrar por Estado:</h3>
@@ -271,6 +223,7 @@
             </select>
         </div>
     </div>
+
     <div id="contenedor-principal" style="max-width: 1000px; margin: 0 auto;">
         <table id="tabla-empleados">
             <thead>
@@ -291,68 +244,63 @@
     </div>
 
     <script>
-        // Config Sheets
         const SHEET_ID = '19i5pwrIx8RX0P2OkE1qY2o5igKvvv2hxUuvb9jM_8LE'; 
-        const API_KEY  = 'AIzaSyD8Su9VTM_oynBtrPvVA4zRyeu-UjeEJDw'; 
-        const RANGE    = 'Empleados!A2:O'; 
+        const API_KEY  = 'AIzaSyD8Su9VTM_oynBtrPvVA4zRyeu-UjeEJDw'; 
+        const RANGE    = 'Empleados!A2:O'; 
 
         let empleados = [];
 
-        // Plantilla de carta y apertura para PDF (Print)
+        // *** GENERACIÓN DE DOCUMENTO (CON FIRMA FIJA) ***
         function abrirCarta({ cedula, nombre, cargo, ingreso, egreso, sueldo, razon, rif, direccion }) {
             const fecha = new Date();
             const dia = fecha.getDate();
             const mes = fecha.toLocaleString('es-VE', { month: 'long' });
             const año = fecha.getFullYear();
-
             const esActivo = !egreso || egreso.trim() === '';
 
             const cuerpo = esActivo
                 ? `Por medio de la presente se hace constar que el ciudadano (a) <strong>${nombre}</strong>, venezolano (a), mayor de edad y portador de la cédula de identidad N° <strong>${cedula}</strong>, labora en esta empresa desde el día ${ingreso}, en el cargo de <strong>${cargo}</strong>, devengando un salario mensual de <strong>${sueldo}</strong>.`
                 : `Por medio de la presente se hace constar que el ciudadano (a) <strong>${nombre}</strong>, venezolano (a), mayor de edad y portador de la cédula de identidad N° <strong>${cedula}</strong>, laboró en esta empresa desde el día ${ingreso} hasta la fecha ${egreso}, en el cargo de <strong>${cargo}</strong>, devengando un salario mensual de <strong>${sueldo}</strong>.`;
 
-            const firmaPath = `${rif}.png`; 
+            // Reemplazo solicitado: Firma única para todos
+            const firmaPath = `firma jeanette.png`; 
 
             const html = `
                 <!DOCTYPE html>
                 <html lang="es">
                 <head>
                     <meta charset="UTF-8" />
-                    <title>Constancia de Trabajo</title>
+                    <title>Constancia de Trabajo - ${nombre}</title>
                     <style>
                         body { font-family: Arial, sans-serif; margin: 40px; line-height: 1.6; color:#000; }
-                        h2 { text-align: center; font-size:16px; margin-bottom:10px; }
-                        p  { margin: 8px 0; }
-                        .firma { margin-top: 80px; text-align: center; }
-                        @media print {
-                            @page { margin: 0; }
-                            body  { margin: 0; }
-                        }
+                        h2 { text-align: center; font-size:16px; margin-bottom:10px; text-decoration: underline; }
+                        .firma { margin-top: 60px; text-align: center; }
+                        .marca-agua { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.08; z-index: -1; }
+                        @media print { @page { margin: 1cm; } body { margin: 0; } }
                     </style>
                 </head>
                 <body>
-                    <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.08; z-index: 0;">
-                        <img src='logo-canguro.png' alt='Logo Canguro' style="height:190px;" />
+                    <div class="marca-agua">
+                        <img src='logo-canguro.png' alt='Logo' style="height:190px;" />
                     </div>
-
-                    <div style="width:600px; margin:0 auto; text-align:center;">
-                        <div style="text-align:left; font-size:15px; margin-bottom:230px;">
+                    <div style="width:600px; margin:0 auto;">
+                        <div style="text-align:left; font-size:14px; margin-bottom:180px;">
                             <strong>${razon}</strong><br />
                             <strong>RIF:</strong> ${rif}
                         </div>
                         <h2>A QUIEN PUEDA INTERESAR</h2>
-                        <p style="text-align:justify;">${cuerpo}</p>
+                        <p style="text-align:justify; margin-top:30px;">${cuerpo}</p>
                         <p style="text-align:justify;">
                             Constancia que se expide por la parte interesada en Caracas a los ${dia} días del mes de ${mes} del año ${año}.
                         </p>
-                        <div class="firma" style="margin-top:60px; text-align:center;">
-                            <img src="${firmaPath}" alt="Firma" style="height:150px; display:block; margin:0 auto;" />
-                            <p style="margin:2px 0;"><strong>MAGDA UZCÁTEGUI</strong></p>
-                            <p style="margin:0;">GERENTE DE RECLUTAMIENTO Y SELECCIÓN</p>
+                        <div class="firma">
+                            <img src="${firmaPath}" alt="Firma Jeanette" style="height:140px; display:block; margin:0 auto;" />
+                            <p style="margin:2px 0;"><strong>JEANETTE ARVELO </strong></p>
+                            <p style="margin:0;">DIRECTORA DE RECURSOS HUMANOS</p>
                         </div>
-                        <p style="text-align:center; font-size:14px; margin-top:130px;">
+                        <div style="text-align:center; font-size:12px; margin-top:100px; border-top: 1px solid #ccc; padding-top:10px;">
                             Dirección: ${direccion}
-                        </p>
+                        </div>
                     </div>
                 </body>
                 </html>
@@ -363,24 +311,21 @@
                 win.document.write(html);
                 win.document.close();
                 win.focus();
-                win.print(); 
+                // Retraso para asegurar que la imagen de la firma cargue antes de imprimir
+                setTimeout(() => { win.print(); }, 500);
             } else {
-                alert("El navegador bloqueó la ventana emergente. Habilita popups.");
+                alert("Habilita los popups en tu navegador.");
             }
         }
-        
-        /**
-         * Renderiza la tabla con la lista de empleados proporcionada.
-         * @param {Array} lista - La lista filtrada de empleados.
-         */
+
+        // *** LÓGICA DE DATOS Y FILTROS ***
         function renderTabla(lista) {
             const cuerpo = document.getElementById('cuerpo-tabla');
             cuerpo.innerHTML = ''; 
-
             lista.forEach((emp) => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td><input type="checkbox" class="select-empleado" value="${emp.cedula}"></td>
+                    <td><input type="checkbox" value="${emp.cedula}"></td>
                     <td>${emp.cedula}</td>
                     <td>${emp.nombre}</td>
                     <td>${emp.cargo}</td>
@@ -394,81 +339,50 @@
             });
         }
 
-        /**
-         * Aplica los filtros de búsqueda por nombre/cédula y estado (activo/egreso)
-         * y llama a la función de renderizado.
-         */
         function aplicarFiltros() {
-            const textoFiltro = document.getElementById('filtro-nombre').value.toLowerCase();
-            const estadoFiltro = document.getElementById('filtro-estado').value;
-
-            const listaFiltrada = empleados.filter(emp => {
-                const coincideTexto = emp.nombre.toLowerCase().includes(textoFiltro) || 
-                                     emp.cedula.toLowerCase().includes(textoFiltro);
-
+            const texto = document.getElementById('filtro-nombre').value.toLowerCase();
+            const estado = document.getElementById('filtro-estado').value;
+            const filtrados = empleados.filter(emp => {
+                const coincideTexto = emp.nombre.toLowerCase().includes(texto) || emp.cedula.toLowerCase().includes(texto);
                 const esActivo = !emp.egreso || emp.egreso.trim() === '';
-                let coincideEstado = true;
-                
-                if (estadoFiltro === 'activo') {
-                    coincideEstado = esActivo;
-                } else if (estadoFiltro === 'egreso') {
-                    coincideEstado = !esActivo;
-                }
-                
+                const coincideEstado = (estado === 'todos') || (estado === 'activo' && esActivo) || (estado === 'egreso' && !esActivo);
                 return coincideTexto && coincideEstado;
             });
-
-            renderTabla(listaFiltrada);
+            renderTabla(filtrados);
         }
         
-        // Carga empleados desde Google Sheets
         async function cargarEmpleados() {
             actualizarFechaHora();
-            
             const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${RANGE}?key=${API_KEY}`;
             try {
                 const res = await fetch(url);
                 const data = await res.json();
-
-                empleados = (data.values || []).map(row => {
-                    return {
-                        cedula: row[0] || '',
-                        nombre: row[1] || '',
-                        cargo:  row[2] || '',
-                        ingreso: row[3] || '',
-                        egreso: row[4] || '',
-                        sueldo: row[5] || '',
-                        razon:  row[6] || '',
-                        rif: row[12] || 'N/A', 
-                        direccion: row[13] || 'N/A' 
-                    };
-                });
-                
+                empleados = (data.values || []).map(row => ({
+                    cedula: row[0] || '',
+                    nombre: row[1] || '',
+                    cargo:  row[2] || '',
+                    ingreso: row[3] || '',
+                    egreso: row[4] || '',
+                    sueldo: row[5] || '',
+                    razon:  row[6] || '',
+                    rif: row[12] || 'N/A', 
+                    direccion: row[13] || 'N/A' 
+                }));
                 aplicarFiltros(); 
             } catch (err) {
-                console.error("Error al cargar datos de Google Sheets:", err);
-                alert('Error al cargar empleados. Revisa tu SHEET_ID y API_KEY.');
-                const cuerpo = document.getElementById('cuerpo-tabla');
-                cuerpo.innerHTML = `<tr><td colspan="9">Error de conexión con Google Sheets. Revisa la consola (F12) para más detalles.</td></tr>`;
+                document.getElementById('cuerpo-tabla').innerHTML = `<tr><td colspan="9">Error al cargar datos.</td></tr>`;
             }
         }
 
-        // Listener para botones individuales
         document.addEventListener('click', e => {
             if (e.target.classList.contains('btn-generar')) {
-                const cedulaTarget = e.target.dataset.cedula;
-                const empleado = empleados.find(emp => emp.cedula === cedulaTarget);
-                if (empleado) {
-                    abrirCarta(empleado);
-                }
+                const emp = empleados.find(emp => emp.cedula === e.target.dataset.cedula);
+                if (emp) abrirCarta(emp);
             }
         }); 
 
-        // Listeners para los filtros
         document.getElementById('filtro-nombre').addEventListener('input', aplicarFiltros);
         document.getElementById('filtro-estado').addEventListener('change', aplicarFiltros);
-        
-        // Inicialización
         cargarEmpleados();
     </script>
 </body>
