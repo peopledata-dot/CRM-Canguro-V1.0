@@ -432,8 +432,8 @@ function abrirAmonestacion({ cedula, nombre, cargo, razon, rif = 'N/A', direccio
                 const data = await res.json();
 
                 empleados = (data.values || []).map(row => ({
-                    cedula: row[0] || '',
-                    nombre: row[1] || '',
+                    cedula: row[1] || '',
+                    nombre: row[0] || '',
                     cargo: row[2] || '',
                     razon: row[6] || '',
                     rif: row[12] || 'N/A',       
